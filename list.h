@@ -28,25 +28,54 @@ list _new_list( uint type_size )
 	return l;
 }
 
-uint list_data_fit( list* const in_list )
-{
-	in_list->size_mem = ( ( in_list->size < in_list->size_mem ) ? ( in_list->size_mem << 1 ) : ( in_list->size + 1 ) );
-	in_list->data = realloc( in_list->data, in_list->size_mem * in_list->size_type );
-	return in_list->size_mem;
-}
+// param importance:
+// l - list
+// t - type
+// v - value
+// p - position
 
 #define list_get( l, t, p ) ( (t*)l.data )[ p ]
+#define list_1st( l, t ) ( (t*)l.data )[ 0 ]
+#define list_2nd( l, t ) ( (t*)l.data )[ 1 ]
+#define list_3rd( l, t ) ( (t*)l.data )[ 2 ]
+#define list_end( l, t ) ( (t*)l.data )[ l.size - 1 ]
 
-#define list_add( l, t, v )                                                              \
-	do {                                                                                   \
-		l.size_mem = ( ( l.size < l.size_mem ) ? ( l.size_mem ) : ( list_data_fit( &l ) ) ); \
-		*(t*)&( (t*)( l.data ) )[ l.size++ ] = v;                                            \
+#define _list_scale_mem( l )                                                      \
+	if( l.size >= l.size_mem )                                                      \
+	{                                                                               \
+		l.size_mem = ( ( l.size == l.size_mem ) ? ( l.size_mem << 1 ) : ( l.size ) ); \
+		l.data = realloc( l.data, l.size_mem * l.size_type );                         \
+	}
+
+#define _list_scale( l, p )                             \
+	l.size = ( ( p < l.size ) ? ( l.size ) : ( p + 1 ) ); \
+	_list_scale_mem( l );
+
+#define _list_apply( l, t, v, p ) *(t*)&( (t*)( l.data ) )[ p ] = v
+
+//
+
+#define list_add( l, t, v )           \
+	do {                                \
+		_list_scale_mem( l );             \
+		_list_apply( l, t, v, l.size++ ); \
 	} while( 0 )
 
-#define list_set( l, t, v, p )                                                                              \
-	do {                                                                                                         \
-		l.size = ( ( p < l.size ) ? ( l.size ) : ( p ) );                                                          \
-		l.size_mem = ( ( l.size < l.size_mem ) ? ( l.size_mem ) : ( list_data_fit( &l ) ) );                       \
-		memmove( l.data + ( l.size_type * ( p + 1 ) ), l.data + ( l.size_type * ( p ) ), l.size++ * l.size_type ); \
-		*(t*)&( (t*)( l.data ) )[ p ] = v;                                                                         \
+#define list_set( l, t, v, p ) \
+	do {                         \
+		_list_scale( l, p );       \
+		_list_apply( l, t, v, p ); \
+	} while( 0 )
+
+#define list_insert( l, t, v, p )                                                                                      \
+	do {                                                                                                                 \
+		if( p < l.size )                                                                                                   \
+		{                                                                                                                  \
+			_list_scale( l, l.size );                                                                                        \
+			memmove( l.data + ( l.size_type * ( p + 1 ) ), l.data + ( l.size_type * ( p ) ), ( l.size - p ) * l.size_type ); \
+		} else                                                                                                             \
+		{                                                                                                                  \
+			_list_scale( l, p );                                                                                             \
+		}                                                                                                                  \
+		_list_apply( l, t, v, p );                                                                                         \
 	} while( 0 )
