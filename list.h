@@ -12,7 +12,7 @@ typedef struct list_s
 		uint id;
 		uint size;
 		uint size_mem;
-		uint size_data;
+		uint size_type;
 		//
 		void* data;
 } list;
@@ -23,9 +23,16 @@ list _new_list( uint type_size )
 	list l;
 	l.size = 0;
 	l.size_mem = 1;
-	l.size_data = type_size;
-	l.data = malloc( l.size_data );
+	l.size_type = type_size;
+	l.data = malloc( l.size_type );
 	return l;
+}
+
+uint list_data_fit( list* const in_list )
+{
+	in_list->size_mem = ( ( in_list->size < in_list->size_mem ) ? ( in_list->size_mem << 1 ) : ( in_list->size + 1 ) );
+	in_list->data = realloc( in_list->data, in_list->size_mem * in_list->size_type );
+	return in_list->size_mem;
 }
 
 #define list_add( l, t, v )                                                              \
@@ -34,9 +41,10 @@ list _new_list( uint type_size )
 		*(t*)&( (t*)( l.data ) )[ l.size++ ] = v;                                            \
 	} while( 0 )
 
-uint list_data_fit( list* const in_list )
-{
-	in_list->size_mem <<= 1;
-	in_list->data = reallocarray( in_list->data, in_list->size_mem, in_list->size_data );
-	return in_list->size_mem;
-}
+#define list_insert( l, t, v, p )                                                                              \
+	do {                                                                                                         \
+		l.size = ( ( p < l.size ) ? ( l.size ) : ( p ) );                                                          \
+		l.size_mem = ( ( l.size < l.size_mem ) ? ( l.size_mem ) : ( list_data_fit( &l ) ) );                       \
+		memmove( l.data + ( l.size_type * ( p + 1 ) ), l.data + ( l.size_type * ( p ) ), l.size++ * l.size_type ); \
+		*(t*)&( (t*)( l.data ) )[ p ] = v;                                                                         \
+	} while( 0 )
