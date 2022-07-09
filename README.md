@@ -1,9 +1,9 @@
-# list
- 
-## usage:
-```c
-#include "hept.h"
+# dds :: *dynamic data structures*
 
+# list:
+
+### usage:
+```c
 {
   list l = new_list( int );
   list_add( l, int, 7 );
