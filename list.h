@@ -43,7 +43,7 @@ uint list_data_fit( list* const in_list )
 		*(t*)&( (t*)( l.data ) )[ l.size++ ] = v;                                            \
 	} while( 0 )
 
-#define list_insert( l, t, v, p )                                                                              \
+#define list_set( l, t, v, p )                                                                              \
 	do {                                                                                                         \
 		l.size = ( ( p < l.size ) ? ( l.size ) : ( p ) );                                                          \
 		l.size_mem = ( ( l.size < l.size_mem ) ? ( l.size_mem ) : ( list_data_fit( &l ) ) );                       \
