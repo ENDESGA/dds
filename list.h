@@ -35,7 +35,7 @@ uint list_data_fit( list* const in_list )
 	return in_list->size_mem;
 }
 
-#define list_get( l, t, p ) ( (t*)l )[ p ]
+#define list_get( l, t, p ) ( (t*)l.data )[ p ]
 
 #define list_add( l, t, v )                                                              \
 	do {                                                                                   \
