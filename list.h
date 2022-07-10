@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef (_MSC_VER)
+#ifdef _MSC_VER
 #include <intrin.h>
 unsigned int __inline clz( unsigned int value )
 {
