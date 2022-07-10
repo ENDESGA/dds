@@ -1,6 +1,14 @@
 # dds :: *dynamic data structures*
 
 # list:
+1D data structure which automatically expands to fit data placed in any position.
+
+```c
+list_add( list, type, value ); // pushes the value to the end of the list
+list_get( list, type, position ); // get the value at position in list
+list_set( list, type, value, position ); // set the value at position in list
+list_insert( list, type, value, position ); // insert the value at position in list
+```
 
 ### usage:
 ```c
