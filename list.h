@@ -7,14 +7,30 @@
 typedef unsigned int uint;
 #endif
 
+#ifndef dataptr
+typedef unsigned char* dataptr;
+#endif
+
+uint msb( uint v ) // most significant bit
+{
+	if( !v ) return 0;
+	v = ( v << 1 ) - 1;
+
+	unsigned r = 0;
+	while( v >>= 1 )
+	{
+		r++;
+	}
+	return r;
+}
+
 typedef struct list_s
 {
-		uint id;
 		uint size;
 		uint size_mem;
 		uint size_type;
 		//
-		void* data;
+		dataptr data;
 } list;
 
 #define new_list( type ) _new_list( sizeof( type ) )
@@ -23,8 +39,8 @@ list _new_list( uint type_size )
 	list l;
 	l.size = 0;
 	l.size_mem = 1;
-	l.size_type = type_size;
-	l.data = malloc( l.size_type );
+	l.size_type = msb( type_size );
+	l.data = (dataptr)malloc( 1 << l.size_type );
 	return l;
 }
 
@@ -40,18 +56,18 @@ list _new_list( uint type_size )
 #define list_3rd( l, t ) ( (t*)l.data )[ 2 ]
 #define list_end( l, t ) ( (t*)l.data )[ l.size - 1 ]
 
-#define _list_scale_mem( l )                                                      \
-	if( l.size >= l.size_mem )                                                      \
-	{                                                                               \
-		l.size_mem = ( ( l.size == l.size_mem ) ? ( l.size_mem << 1 ) : ( l.size ) ); \
-		l.data = realloc( l.data, l.size_mem * l.size_type );                         \
+#define _list_scale_mem( l )                                                          \
+	if( l.size >= l.size_mem )                                                          \
+	{                                                                                   \
+		l.size_mem = ( ( l.size == l.size_mem ) ? ( l.size_mem << 1 ) : ( l.size ) ) + 1; \
+		l.data = (dataptr)realloc( l.data, l.size_mem << l.size_type );                   \
 	}
 
 #define _list_scale( l, p )                             \
 	l.size = ( ( p < l.size ) ? ( l.size ) : ( p + 1 ) ); \
 	_list_scale_mem( l );
 
-#define _list_apply( l, t, v, p ) *(t*)&( (t*)( l.data ) )[ p ] = v
+#define _list_apply( l, t, v, p ) ( (t*)( l.data ) )[ p ] = v
 
 //
 
@@ -67,15 +83,15 @@ list _new_list( uint type_size )
 		_list_apply( l, t, v, p ); \
 	} while( 0 )
 
-#define list_insert( l, t, v, p )                                                                                      \
-	do {                                                                                                                 \
-		if( p < l.size )                                                                                                   \
-		{                                                                                                                  \
-			_list_scale( l, l.size );                                                                                        \
-			memmove( l.data + ( l.size_type * ( p + 1 ) ), l.data + ( l.size_type * ( p ) ), ( l.size - p ) * l.size_type ); \
-		} else                                                                                                             \
-		{                                                                                                                  \
-			_list_scale( l, p );                                                                                             \
-		}                                                                                                                  \
-		_list_apply( l, t, v, p );                                                                                         \
+#define list_insert( l, t, v, p )                                                                                     \
+	do {                                                                                                                \
+		if( p < l.size )                                                                                                  \
+		{                                                                                                                 \
+			l.size++;                                                                                                       \
+			_list_scale_mem( l );                                                                                           \
+			memmove( l.data + ( ( p + 1 ) << l.size_type ), l.data + ( p << l.size_type ), ( l.size - p ) << l.size_type ); \
+		} else                                                                                                            \
+			_list_scale( l, p );                                                                                            \
+                                                                                                                      \
+		_list_apply( l, t, v, p );                                                                                        \
 	} while( 0 )
