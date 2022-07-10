@@ -91,7 +91,10 @@ list _new_list( uint type_size )
 			_list_scale_mem( l );                                                                                           \
 			memmove( l.data + ( ( p + 1 ) << l.size_type ), l.data + ( p << l.size_type ), ( l.size - p ) << l.size_type ); \
 		} else                                                                                                            \
-			_list_scale( l, p );                                                                                            \
+		{                                                                                                                 \
+			l.size = p + 1;                                                                                                 \
+			_list_scale_mem( l );                                                                                           \
+		}                                                                                                                 \
                                                                                                                       \
 		_list_apply( l, t, v, p );                                                                                        \
 	} while( 0 )
