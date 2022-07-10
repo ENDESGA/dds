@@ -3,6 +3,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef (_MSC_VER)
+#include <intrin.h>
+unsigned int __inline clz( unsigned int value )
+{
+    unsigned long leading_zero = 0;
+
+    if ( _BitScanReverse( &leading_zero, value ) )
+    {
+       return leading_zero;
+    }
+    else
+    {
+        return 0;
+    }
+}
+#endif
+
 #ifndef uint
 typedef unsigned int uint;
 #endif
@@ -12,7 +29,22 @@ typedef unsigned char* dataptr;
 #endif
 
 
-#define msb( v ) (!v) ? 0 : 32-__builtin_clz(v)
+#if defined(__clang__)
+#define msb( v ) (!v) ? 0 : 31-__builtin_clz(v)
+#elif defined(__GNUC__) || defined(__GNUG__)
+#define msb( v ) (!v) ? 0 : 31-__builtin_clz(v)
+#elif defined(_MSC_VER)
+#define msb( v ) clz(v)
+#else
+uint msb(uint v){
+	uint r = 0;
+
+	while (v >>= 1) {
+	    r++;
+	}
+}
+#endif
+
 
 typedef struct list_s
 {
