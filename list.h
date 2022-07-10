@@ -11,18 +11,8 @@ typedef unsigned int uint;
 typedef unsigned char* dataptr;
 #endif
 
-uint msb( uint v ) // most significant bit
-{
-	if( !v ) return 0;
-	v = ( v << 1 ) - 1;
 
-	unsigned r = 0;
-	while( v >>= 1 )
-	{
-		r++;
-	}
-	return r;
-}
+#define msb( v ) (!v) ? 0 : 32-__builtin_clz(v)
 
 typedef struct list_s
 {
