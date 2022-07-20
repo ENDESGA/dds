@@ -52,7 +52,25 @@ plane_set( list, type, value, x_position, y_position ); // set the value at x,y 
 ```c
 {
   plane p = new_plane( int );
-  plane_set( p, int, 7, -3, -27); // set -3,-27 to 7
-  int i = plane_get(p, int, -3, -27); // returns 7
+  plane_set( p, int, 1, 4,4);
+	plane_set( p, int, 2, -6,-3);
+	plane_set( p, int, 3, 6,-2);
+	plane_set( p, int, 4, -2,0);
+	plane_set( p, int, 5, -1, 5 );
+	plane_set( p, int, 6, 3, -4 );
+	plane_set( p, int, 7, 0, 4 );
 }
+
+output values in plane:
+. . . . . . . - . . . . . . . 
+. . . . . . . - 0 0 6 0 0 0 . 
+. 2 0 0 0 0 0 - 0 0 0 0 0 0 . 
+. 0 0 0 0 0 0 - 0 0 0 0 0 3 . 
+. 0 0 0 0 0 0 - 0 0 0 0 0 0 . 
+- - - - - 4 - 0 + + + + + + + 
+. . . . . 0 0 + 0 0 0 0 . . . 
+. . . . . 0 0 + 0 0 0 0 . . . 
+. . . . . 0 0 + 0 0 0 0 . . . 
+. . . . . 0 0 7 0 0 0 1 . . . 
+. . . . . 0 5 + . . . . . . . 
 ```
