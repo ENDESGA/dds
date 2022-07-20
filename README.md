@@ -61,7 +61,7 @@ plane_set( list, type, value, x_position, y_position ); // set the value at x,y 
 	plane_set( p, int, 7, 0, 4 );
 }
 
-output values in plane:
+values within the plane:
 . . . . . . . - . . . . . . . 
 . . . . . . . - 0 0 6 0 0 0 . 
 . 2 0 0 0 0 0 - 0 0 0 0 0 0 . 
