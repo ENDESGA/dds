@@ -24,35 +24,35 @@
 
 typedef struct _plane_struct
 {
-		uint width_11, width_10, width_00, width_01;
-		uint height_11, height_10, height_00, height_01;
-		uint area_11, area_10, area_00, area_01;
-		uint count_11, count_10, count_00, count_01;
-		uint size_mem_11, size_mem_10, size_mem_00, size_mem_01;
-		uint size_type;
-		//
-		dataptr data_11;
-		dataptr data_10;
-		dataptr data_00;
-		dataptr data_01;
+  uint width_11, width_10, width_00, width_01;
+  uint height_11, height_10, height_00, height_01;
+  uint area_11, area_10, area_00, area_01;
+  uint count_11, count_10, count_00, count_01;
+  uint size_mem_11, size_mem_10, size_mem_00, size_mem_01;
+  uint size_type;
+  //
+  dataptr data_11;
+  dataptr data_10;
+  dataptr data_00;
+  dataptr data_01;
 } plane;
 
 #define new_plane( type ) _new_plane( sizeof( type ) )
 plane _new_plane( uint type_size )
 {
-	plane p;
-	p.width_11 = 0, p.width_10 = 0, p.width_00 = 0, p.width_01 = 0;
-	p.height_11 = 0, p.height_10 = 0, p.height_00 = 0, p.height_01 = 0;
-	p.count_11 = 0, p.count_10 = 0, p.count_00 = 0, p.count_01 = 0;
-	p.size_mem_11 = 1, p.size_mem_10 = 1, p.size_mem_00 = 1, p.size_mem_01 = 1;
-	p.size_type = type_size;
-	//
-	p.data_11 = (dataptr)calloc( 1, p.size_type );
-	p.data_10 = (dataptr)calloc( 1, p.size_type );
-	p.data_00 = (dataptr)calloc( 1, p.size_type );
-	p.data_01 = (dataptr)calloc( 1, p.size_type );
+  plane p;
+  p.width_11 = 0, p.width_10 = 0, p.width_00 = 0, p.width_01 = 0;
+  p.height_11 = 0, p.height_10 = 0, p.height_00 = 0, p.height_01 = 0;
+  p.count_11 = 0, p.count_10 = 0, p.count_00 = 0, p.count_01 = 0;
+  p.size_mem_11 = 1, p.size_mem_10 = 1, p.size_mem_00 = 1, p.size_mem_01 = 1;
+  p.size_type = type_size;
+  //
+  p.data_11 = (dataptr)calloc( 1, p.size_type );
+  p.data_10 = (dataptr)calloc( 1, p.size_type );
+  p.data_00 = (dataptr)calloc( 1, p.size_type );
+  p.data_01 = (dataptr)calloc( 1, p.size_type );
 
-	return p;
+  return p;
 }
 
 // param importance:
@@ -62,29 +62,29 @@ plane _new_plane( uint type_size )
 // x - horizonal position
 // y - vertical position
 
-#define plane_at( p, t, x, y ) ( ( x >= 0 ) ?                                                                 \
-																	 ( ( y >= 0 ) ?                                                             \
-																			 ( ( (tile*)p.data_11 )[ ( x ) + ( y * p.width_11 ) ] ) :               \
-																			 ( ( (tile*)p.data_10 )[ ( x ) + ( ( -y - 1 ) * p.width_10 ) ] ) ) :    \
-																	 ( ( y < 0 ) ?                                                              \
-																			 ( ( (tile*)p.data_00 )[ ( -x - 1 ) + ( ( -y - 1 ) * p.width_00 ) ] ) : \
-																			 ( ( (tile*)p.data_01 )[ ( -x - 1 ) + ( y * p.width_01 ) ] ) ) )
+#define plane_at( p, t, x, y ) ( ( x >= 0 ) ?                              \
+  ( ( y >= 0 ) ?                                                           \
+    ( ( (tile*)p.data_11 )[ ( x ) + ( y * p.width_11 ) ] ) :               \
+    ( ( (tile*)p.data_10 )[ ( x ) + ( ( -y - 1 ) * p.width_10 ) ] ) ) :    \
+  ( ( y < 0 ) ?                                                            \
+    ( ( (tile*)p.data_00 )[ ( -x - 1 ) + ( ( -y - 1 ) * p.width_00 ) ] ) : \
+    ( ( (tile*)p.data_01 )[ ( -x - 1 ) + ( y * p.width_01 ) ] ) ) )
 
-#define plane_get( p, t, x, y ) ( ( x >= 0 ) ?                                                                       \
-																		( ( y >= 0 ) ?                                                                   \
-																				( ( x >= p.width_11 || y >= p.height_11 ) ?                                  \
-																						( ( t ){ 0 } ) :                                                         \
-																						( ( (tile*)p.data_11 )[ ( x ) + ( y * p.width_11 ) ] ) ) :               \
-																				( ( x >= p.width_10 || ( -y - 1 ) >= p.height_10 ) ?                         \
-																						( ( t ){ 0 } ) :                                                         \
-																						( ( (tile*)p.data_10 )[ ( x ) + ( ( -y - 1 ) * p.width_10 ) ] ) ) ) :    \
-																		( ( y < 0 ) ?                                                                    \
-																				( ( ( -x - 1 ) >= p.width_00 || ( -y - 1 ) >= p.height_00 ) ?                \
-																						( ( t ){ 0 } ) :                                                         \
-																						( ( (tile*)p.data_00 )[ ( -x - 1 ) + ( ( -y - 1 ) * p.width_00 ) ] ) ) : \
-																				( ( ( -x - 1 ) >= p.width_01 || y >= p.height_01 ) ?                         \
-																						( ( t ){ 0 } ) :                                                         \
-																						( ( (tile*)p.data_01 )[ ( -x - 1 ) + ( y * p.width_01 ) ] ) ) ) )
+#define plane_get( p, t, x, y ) ( ( x >= 0 ) ?                                 \
+  ( ( y >= 0 ) ?                                                               \
+    ( ( x >= p.width_11 || y >= p.height_11 ) ?                                \
+      ( ( t ){ 0 } ) :                                                         \
+      ( ( (tile*)p.data_11 )[ ( x ) + ( y * p.width_11 ) ] ) ) :               \
+    ( ( x >= p.width_10 || ( -y - 1 ) >= p.height_10 ) ?                       \
+      ( ( t ){ 0 } ) :                                                         \
+      ( ( (tile*)p.data_10 )[ ( x ) + ( ( -y - 1 ) * p.width_10 ) ] ) ) ) :    \
+  ( ( y < 0 ) ?                                                                \
+    ( ( ( -x - 1 ) >= p.width_00 || ( -y - 1 ) >= p.height_00 ) ?              \
+      ( ( t ){ 0 } ) :                                                         \
+      ( ( (tile*)p.data_00 )[ ( -x - 1 ) + ( ( -y - 1 ) * p.width_00 ) ] ) ) : \
+    ( ( ( -x - 1 ) >= p.width_01 || y >= p.height_01 ) ?                       \
+      ( ( t ){ 0 } ) :                                                         \
+      ( ( (tile*)p.data_01 )[ ( -x - 1 ) + ( y * p.width_01 ) ] ) ) ) )
 
 //
 
